@@ -2,13 +2,11 @@ import express from 'express'
 import cookieSession from 'cookie-session'
 import passport from 'passport'
 import bodyParser from 'body-parser'
-import firebase from 'firebase'
 import keys from './config/keys'
 import apiRoutes from './api'
 
 const app = express()
 
-firebase.initializeApp(keys.firebase)
 app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({
