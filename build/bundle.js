@@ -389,10 +389,6 @@ app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({
   extended: true
 }));
-app.use((0, _cookieSession2.default)({
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-  keys: [_keys2.default.cookieKey]
-}));
 app.use(_passport2.default.initialize());
 app.use(_passport2.default.session());
 app.use('/api', _api2.default);
