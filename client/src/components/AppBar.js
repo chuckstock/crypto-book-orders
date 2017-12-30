@@ -7,7 +7,7 @@ import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
 import Typography from 'material-ui/Typography'
 import Divider from 'material-ui/Divider'
-import SimpleList from './SimpleList'
+import SymbolList from './SymbolList'
 
 const drawerWidth = 240
 
@@ -61,7 +61,7 @@ class PermanentDrawer extends React.Component {
       >
         <div className={classes.drawerHeader} />
         <Divider />
-        <SimpleList />
+        <SymbolList />
         <Divider />
       </Drawer>
     )
@@ -72,7 +72,7 @@ class PermanentDrawer extends React.Component {
           <AppBar className={classNames(classes.appBar)}>
             <Toolbar>
               <Typography type="title" color="inherit" noWrap>
-                Permanent drawer
+                Crypto Order Books
               </Typography>
             </Toolbar>
           </AppBar>

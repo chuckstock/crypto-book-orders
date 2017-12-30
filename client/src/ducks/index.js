@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import orderBooks from './order-books'
+import exchanges from './exchanges'
 
 export default combineReducers({
-  orderBooks
+  exchanges
 })

@@ -1,31 +1,49 @@
+import _ from 'lodash'
 import express from 'express'
 import ccxt from 'ccxt'
-import orderBooks from '../client/src/ducks/order-books'
+const orderBooks = []
 
 const router = express.Router()
 
-router.get('/order_books', async (req, res) => {
-  let poloOB, bittrexOB
+router.get('/order_books/:pairFirst/:pairSecond', async (req, res) => {
+  const { pairFirst, pairSecond } = req.params
+  const pair = `${pairFirst}/${pairSecond}`
+
   try {
     const poloniex = new ccxt.poloniex()
     const bittrex = new ccxt.bittrex()
-    poloOB = await poloniex.fetchOrderBook('ETH/BTC')
-    bittrexOB = await bittrex.fetchOrderBook('ETH/BTC')
+    await poloniex.loadMarkets()
+    await bittrex.loadMarkets()
 
-    res.send(
-      createCombinedOBData({
+    const poloOB = await poloniex.fetchOrderBook(pair)
+    const bittrexOB = await bittrex.fetchOrderBook(pair)
+
+    res.send({
+      symbols: getCommonExchangeSymbols([poloniex.symbols, bittrex.symbols]),
+      ...createCombinedOBData({
         [poloniex.id]: poloOB,
         [bittrex.id]: bittrexOB
       })
-    )
+    })
   } catch (error) {
     res.send(error)
   }
 })
 
-function createCombinedOBData(data) {
-  console.log(Object.keys(data))
+// Only show symbols that are available on both exchanges
+function getCommonExchangeSymbols(exchangeSymbols) {
+  return exchangeSymbols[0].filter(function(x) {
+    return exchangeSymbols.every(function(y) {
+      if (y.indexOf(x) != -1) {
+        y[y.indexOf(x)] = Infinity
+        return true
+      }
+      return false
+    })
+  })
+}
 
+function createCombinedOBData(data) {
   const results = { asks: {}, bids: {} }
   Object.keys(data).forEach(exchange => {
     Object.keys(results).forEach(orderType => {

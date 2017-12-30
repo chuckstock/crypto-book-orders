@@ -402,7 +402,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(_express2.default.static('client/build'));
 
   // Express will serve index.html if it doesn't recognize route
-  var path = __webpack_require__(28);
+  var path = __webpack_require__(27);
   app.get('*', function (req, res) {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
@@ -1581,17 +1581,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _lodash = __webpack_require__(25);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _express = __webpack_require__(0);
 
 var _express2 = _interopRequireDefault(_express);
 
-var _ccxt = __webpack_require__(25);
+var _ccxt = __webpack_require__(26);
 
 var _ccxt2 = _interopRequireDefault(_ccxt);
-
-var _orderBooks = __webpack_require__(26);
-
-var _orderBooks2 = _interopRequireDefault(_orderBooks);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1599,48 +1601,61 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
+var orderBooks = [];
+
 var router = _express2.default.Router();
 
-router.get('/order_books', function () {
+router.get('/order_books/:pairFirst/:pairSecond', function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var poloOB, bittrexOB, _createCombinedOBData, poloniex, bittrex;
+    var _req$params, pairFirst, pairSecond, pair, _createCombinedOBData, poloniex, bittrex, poloOB, bittrexOB;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            poloOB = void 0, bittrexOB = void 0;
-            _context.prev = 1;
+            _req$params = req.params, pairFirst = _req$params.pairFirst, pairSecond = _req$params.pairSecond;
+            pair = pairFirst + '/' + pairSecond;
+            _context.prev = 2;
             poloniex = new _ccxt2.default.poloniex();
             bittrex = new _ccxt2.default.bittrex();
-            _context.next = 6;
-            return poloniex.fetchOrderBook('ETH/BTC');
+            _context.next = 7;
+            return poloniex.loadMarkets();
 
-          case 6:
-            poloOB = _context.sent;
+          case 7:
             _context.next = 9;
-            return bittrex.fetchOrderBook('ETH/BTC');
+            return bittrex.loadMarkets();
 
           case 9:
+            _context.next = 11;
+            return poloniex.fetchOrderBook(pair);
+
+          case 11:
+            poloOB = _context.sent;
+            _context.next = 14;
+            return bittrex.fetchOrderBook(pair);
+
+          case 14:
             bittrexOB = _context.sent;
 
 
-            res.send(createCombinedOBData((_createCombinedOBData = {}, _defineProperty(_createCombinedOBData, poloniex.id, poloOB), _defineProperty(_createCombinedOBData, bittrex.id, bittrexOB), _createCombinedOBData)));
-            _context.next = 16;
+            res.send(_extends({
+              symbols: getCommonExchangeSymbols([poloniex.symbols, bittrex.symbols])
+            }, createCombinedOBData((_createCombinedOBData = {}, _defineProperty(_createCombinedOBData, poloniex.id, poloOB), _defineProperty(_createCombinedOBData, bittrex.id, bittrexOB), _createCombinedOBData))));
+            _context.next = 21;
             break;
 
-          case 13:
-            _context.prev = 13;
-            _context.t0 = _context['catch'](1);
+          case 18:
+            _context.prev = 18;
+            _context.t0 = _context['catch'](2);
 
             res.send(_context.t0);
 
-          case 16:
+          case 21:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, undefined, [[1, 13]]);
+    }, _callee, undefined, [[2, 18]]);
   }));
 
   return function (_x, _x2) {
@@ -1648,9 +1663,20 @@ router.get('/order_books', function () {
   };
 }());
 
-function createCombinedOBData(data) {
-  console.log(Object.keys(data));
+// Only show symbols that are available on both exchanges
+function getCommonExchangeSymbols(exchangeSymbols) {
+  return exchangeSymbols[0].filter(function (x) {
+    return exchangeSymbols.every(function (y) {
+      if (y.indexOf(x) != -1) {
+        y[y.indexOf(x)] = Infinity;
+        return true;
+      }
+      return false;
+    });
+  });
+}
 
+function createCombinedOBData(data) {
   var results = { asks: {}, bids: {} };
   Object.keys(data).forEach(function (exchange) {
     Object.keys(results).forEach(function (orderType) {
@@ -1680,95 +1706,16 @@ exports.default = router;
 /* 25 */
 /***/ (function(module, exports) {
 
-module.exports = require("ccxt");
+module.exports = require("lodash");
 
 /***/ }),
 /* 26 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.fetchOrderBooks = exports.FETCH_ORDER_BOOKS = undefined;
-
-var _axios = __webpack_require__(27);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// Actions
-var FETCH_ORDER_BOOKS = exports.FETCH_ORDER_BOOKS = 'fetch-order-books';
-
-// Reducer
-
-exports.default = function () {
-  var _actions;
-
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var action = arguments[1];
-
-  var actions = (_actions = {}, _defineProperty(_actions, FETCH_ORDER_BOOKS, function () {
-    return action.payload.data;
-  }), _defineProperty(_actions, 'default', function _default() {
-    return state;
-  }), _actions);
-
-  return (actions[action.type] || actions.default)();
-};
-
-// Action Creators
-
-
-var fetchOrderBooks = exports.fetchOrderBooks = function fetchOrderBooks() {
-  return function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(dispatch) {
-      var res;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return _axios2.default.get('/api/exchanges/order_books');
-
-            case 2:
-              res = _context.sent;
-
-
-              dispatch({
-                type: FETCH_ORDER_BOOKS,
-                payload: res
-              });
-
-            case 4:
-            case 'end':
-              return _context.stop();
-          }
-        }
-      }, _callee, undefined);
-    }));
-
-    return function (_x2) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-};
+module.exports = require("ccxt");
 
 /***/ }),
 /* 27 */
-/***/ (function(module, exports) {
-
-module.exports = require("axios");
-
-/***/ }),
-/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
