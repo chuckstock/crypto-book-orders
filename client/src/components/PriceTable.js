@@ -42,7 +42,6 @@ class PriceTable extends Component {
 
   render() {
     const { classes, title, data, isLoading } = this.props
-    console.log('data', data)
 
     return (
       <Paper className={classes.root}>

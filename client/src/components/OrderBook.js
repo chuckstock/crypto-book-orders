@@ -39,8 +39,6 @@ class OrderBook extends Component {
 }
 
 function mapStateToProps({ exchanges }) {
-  console.log('exchange', exchanges)
-
   return {
     orderBooks: exchanges.orderBooks,
     isLoading: exchanges.isLoading,
