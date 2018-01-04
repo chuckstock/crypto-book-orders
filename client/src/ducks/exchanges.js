@@ -1,10 +1,10 @@
 import axios from 'axios'
 
 // Actions
-const FETCH_ORDER_BOOKS = 'fetch-order-books'
-const FETCH_ORDER_BOOKS_REQUEST = 'fetch-order-books-request'
-const FETCH_EXCHANGE_SYMBOLS = 'fetch-exchange-symbols'
-const FETCH_EXCHANGE_SYMBOLS_REQUEST = 'fetch-exchange-symbols-request'
+export const FETCH_ORDER_BOOKS_REQUEST = 'fetch-order-books-request'
+export const FETCH_ORDER_BOOKS = 'fetch-order-books'
+export const FETCH_EXCHANGE_SYMBOLS_REQUEST = 'fetch-exchange-symbols-request'
+export const FETCH_EXCHANGE_SYMBOLS = 'fetch-exchange-symbols'
 
 const INITIAL_STATE = {
   isLoading: true,
@@ -27,7 +27,12 @@ export default (state = INITIAL_STATE, action) => {
     }),
     [FETCH_EXCHANGE_SYMBOLS]: () => ({
       ...state,
+      isLoading: false,
       symbols: action.payload.data
+    }),
+    [FETCH_EXCHANGE_SYMBOLS_REQUEST]: () => ({
+      ...state,
+      isLoading: true
     }),
     default: () => state
   }

@@ -13,6 +13,7 @@
     "start":
       "if-env NODE_ENV=production && yarn serve || npm-run-all -p server build-server client",
     "server": "nodemon --watch build --exec \"node build/bundle.js\"",
+    "test": "npm test --prefix client",
     "serve": "node build/bundle.js",
     "build-server": "webpack --config webpack.config.js --watch",
     "client": "npm start --prefix client",
