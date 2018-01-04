@@ -1,6 +1,4 @@
 import express from 'express'
-import cookieSession from 'cookie-session'
-import passport from 'passport'
 import bodyParser from 'body-parser'
 import keys from './config/keys'
 import apiRoutes from './api'
@@ -13,8 +11,6 @@ app.use(
     extended: true
   })
 )
-app.use(passport.initialize())
-app.use(passport.session())
 app.use('/api', apiRoutes)
 
 if (process.env.NODE_ENV === 'production') {
