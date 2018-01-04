@@ -58,19 +58,17 @@ class PriceTable extends Component {
           </TableHead>
           <TableBody>
             {!isLoading &&
-              Object.keys(data)
-                .sort()
-                .map(key => {
-                  return (
-                    <TableRow key={key}>
-                      <TableCell className={classes.exchange}>
-                        {data[key].exchanges.join(' ')}
-                      </TableCell>
-                      <TableCell numeric>{key}</TableCell>
-                      <TableCell numeric>{data[key].volume}</TableCell>
-                    </TableRow>
-                  )
-                })}
+              Object.keys(data).map(key => {
+                return (
+                  <TableRow key={key}>
+                    <TableCell className={classes.exchange}>
+                      {data[key].exchanges.join(' ')}
+                    </TableCell>
+                    <TableCell numeric>{key}</TableCell>
+                    <TableCell numeric>{data[key].volume}</TableCell>
+                  </TableRow>
+                )
+              })}
           </TableBody>
         </Table>
         {isLoading && (
