@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import List, { ListItem, ListItemText } from 'material-ui/List'
@@ -16,31 +16,38 @@ const styles = theme => ({
   }
 })
 
-function SymbolList(props) {
-  const { classes, symbols, selectedSymbol, fetchOrderBooks } = props
+class SymbolList extends Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired
+  }
 
-  return (
-    <div className={classes.root}>
-      <List>
-        {symbols.map(symbol => {
-          return (
-            <ListItem
-              key={symbol}
-              onClick={() => fetchOrderBooks(symbol)}
-              className={symbol === selectedSymbol ? classes.active : ''}
-              button
-            >
-              <ListItemText primary={symbol} />
-            </ListItem>
-          )
-        })}
-      </List>
-    </div>
-  )
-}
+  onListItemClick = symbol => {
+    this.props.fetchOrderBooks(symbol)
+    window.scrollTo(0, 0)
+  }
 
-SymbolList.propTypes = {
-  classes: PropTypes.object.isRequired
+  render() {
+    const { classes, symbols, selectedSymbol } = this.props
+
+    return (
+      <div className={classes.root}>
+        <List>
+          {symbols.map(symbol => {
+            return (
+              <ListItem
+                key={symbol}
+                onClick={() => this.onListItemClick(symbol)}
+                className={symbol === selectedSymbol ? classes.active : ''}
+                button
+              >
+                <ListItemText primary={symbol} />
+              </ListItem>
+            )
+          })}
+        </List>
+      </div>
+    )
+  }
 }
 
 function mapStateToProps({ exchanges }) {

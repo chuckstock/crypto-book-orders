@@ -18,13 +18,25 @@ router.get('/order_books/:pairFirst/:pairSecond', async (req, res) => {
     const poloOB = await poloniex.fetchOrderBook(pair)
     const bittrexOB = await bittrex.fetchOrderBook(pair)
 
-    res.send({
-      symbols: getCommonExchangeSymbols([poloniex.symbols, bittrex.symbols]),
-      ...createCombinedOBData({
+    res.send(
+      createCombinedOBData({
         [poloniex.id]: poloOB,
         [bittrex.id]: bittrexOB
       })
-    })
+    )
+  } catch (error) {
+    res.send(error)
+  }
+})
+
+router.get('/exchange_symbols', async (req, res) => {
+  try {
+    const poloniex = new ccxt.poloniex()
+    const bittrex = new ccxt.bittrex()
+    await poloniex.loadMarkets()
+    await bittrex.loadMarkets()
+
+    res.send(getCommonExchangeSymbols([poloniex.symbols, bittrex.symbols]))
   } catch (error) {
     res.send(error)
   }

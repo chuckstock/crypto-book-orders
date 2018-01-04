@@ -1577,8 +1577,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _lodash = __webpack_require__(25);
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -1634,9 +1632,7 @@ router.get('/order_books/:pairFirst/:pairSecond', function () {
             bittrexOB = _context.sent;
 
 
-            res.send(_extends({
-              symbols: getCommonExchangeSymbols([poloniex.symbols, bittrex.symbols])
-            }, createCombinedOBData((_createCombinedOBData = {}, _defineProperty(_createCombinedOBData, poloniex.id, poloOB), _defineProperty(_createCombinedOBData, bittrex.id, bittrexOB), _createCombinedOBData))));
+            res.send(createCombinedOBData((_createCombinedOBData = {}, _defineProperty(_createCombinedOBData, poloniex.id, poloOB), _defineProperty(_createCombinedOBData, bittrex.id, bittrexOB), _createCombinedOBData)));
             _context.next = 21;
             break;
 
@@ -1656,6 +1652,48 @@ router.get('/order_books/:pairFirst/:pairSecond', function () {
 
   return function (_x, _x2) {
     return _ref.apply(this, arguments);
+  };
+}());
+
+router.get('/exchange_symbols', function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
+    var poloniex, bittrex;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            poloniex = new _ccxt2.default.poloniex();
+            bittrex = new _ccxt2.default.bittrex();
+            _context2.next = 5;
+            return poloniex.loadMarkets();
+
+          case 5:
+            _context2.next = 7;
+            return bittrex.loadMarkets();
+
+          case 7:
+
+            res.send(getCommonExchangeSymbols([poloniex.symbols, bittrex.symbols]));
+            _context2.next = 13;
+            break;
+
+          case 10:
+            _context2.prev = 10;
+            _context2.t0 = _context2['catch'](0);
+
+            res.send(_context2.t0);
+
+          case 13:
+          case 'end':
+            return _context2.stop();
+        }
+      }
+    }, _callee2, undefined, [[0, 10]]);
+  }));
+
+  return function (_x3, _x4) {
+    return _ref2.apply(this, arguments);
   };
 }());
 

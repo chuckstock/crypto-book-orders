@@ -51,7 +51,7 @@ class PriceTable extends Component {
         <Table>
           <TableHead className={classes.head}>
             <TableRow>
-              <TableCell>Exchange</TableCell>
+              <TableCell>Exchanges</TableCell>
               <TableCell numeric>Price</TableCell>
               <TableCell numeric>Amount</TableCell>
             </TableRow>
@@ -62,7 +62,7 @@ class PriceTable extends Component {
                 return (
                   <TableRow key={key}>
                     <TableCell className={classes.exchange}>
-                      {data[key].exchanges.join(' ')}
+                      {data[key].exchanges.join(' | ')}
                     </TableCell>
                     <TableCell numeric>{key}</TableCell>
                     <TableCell numeric>{data[key].volume}</TableCell>

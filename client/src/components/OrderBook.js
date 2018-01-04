@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { fetchOrderBooks } from '../ducks/exchanges'
+import { fetchOrderBooks, fetchExchangeSymbols } from '../ducks/exchanges'
 import PriceTable from './PriceTable'
 
 class OrderBook extends Component {
   componentDidMount() {
     this.props.fetchOrderBooks(this.props.selectedSymbol)
+    this.props.fetchExchangeSymbols()
   }
 
   render() {
@@ -46,4 +47,7 @@ function mapStateToProps({ exchanges }) {
   }
 }
 
-export default connect(mapStateToProps, { fetchOrderBooks })(OrderBook)
+export default connect(mapStateToProps, {
+  fetchOrderBooks,
+  fetchExchangeSymbols
+})(OrderBook)
